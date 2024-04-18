@@ -1,0 +1,15 @@
+- name: "Fix kubeadm"
+  ansible.builtin.shell: |
+    sudo containerd config default | sudo tee /etc/containerd/config.toml
+    sudo sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/' /etc/containerd/config.toml
+    sudo sed -i 's/snapshotter = "overlayfs"/snapshotter = "native"/' /etc/containerd/config.toml
+    sudo sed -i 's/systemd_cgroup \= true/systemd_cgroup \= true/' /etc/containerd/config.toml
+    sudo systemctl restart containerd
+- name: "Kubeadm init"
+  command: "sudo kubeadm init"
+  become: yes
+- name: "Copy kubeadm config files"
+  ansible.builtin.shell: |
+    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+#    sudo chown $(id -u):$(id -g) $HOME/.kube/config

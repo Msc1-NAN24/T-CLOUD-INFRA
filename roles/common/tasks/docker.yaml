@@ -1,0 +1,20 @@
+- name: Update all packages and install default packages
+  become: yes
+  ansible.builtin.apt:
+    update_cache: yes
+    name: ["ca-certificates", "curl"]
+    state: "latest"
+- name: Add docker repository to apt source
+  ansible.builtin.shell: | 
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+    sudo echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+- name: Update apt
+  become: yes
+  ansible.builtin.apt:
+    update_cache: yes
+- name: Install docker engines packages
+  become: yes
+  ansible.builtin.apt:
+    name: ["docker-ce", "docker-ce-cli", "containerd.io", "docker-buildx-plugin", "docker-compose-plugin"]

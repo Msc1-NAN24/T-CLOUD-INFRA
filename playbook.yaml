@@ -1,0 +1,4 @@
+- name: Initialize workers
+  hosts: [workers]
+  roles:
+    - common
