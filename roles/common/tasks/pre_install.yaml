@@ -1,4 +1,8 @@
 ---
+- name: Change hostname
+  hostname:
+    name: "localhost"
+    state: present
 - name: Add Kubernetes APT GPG key
   when: ansible_os_family == "Debian"
   apt_key:

@@ -16,3 +16,10 @@ variable "vm_size" {
   nullable    = false
   default     = "Standard_A4_v2"
 }
+
+variable "azure_suffix" {
+  type        = string
+  description = "The suffix to be added to the Azure resources."
+  nullable    = false
+  default     = ".westeurope.cloudapp.azure.com"
+}

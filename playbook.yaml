@@ -1,4 +1,4 @@
 - name: Initialize workers
-  hosts: [workers]
+  hosts: [control_plane, workers]
   roles:
     - common
