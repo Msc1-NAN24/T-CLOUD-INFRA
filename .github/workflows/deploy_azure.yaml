@@ -41,6 +41,7 @@ jobs:
         with:
           key: ${{ secrets.SSH_KEY }}
           name: id_rsa # optional
+          known_hosts: unnecessary
           if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
 
       # Install the latest version of the Terraform CLI
