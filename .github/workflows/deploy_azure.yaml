@@ -57,7 +57,7 @@ jobs:
         id: tf-plan
         run: |
           export exitcode=0
-          echo "${{ secrets.TF_VARS }}" > terraform.tfvars
+          echo "${{ env.TF_VAR }}" > terraform.tfvars
           cat terraform.tfvars
           terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
           
