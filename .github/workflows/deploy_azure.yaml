@@ -19,6 +19,7 @@ env:
   ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
   ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+  TF_VAR: ${{ vars.TF_VARS }}
 
 jobs:
   terraform-plan:
@@ -40,6 +41,11 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
+
+      # Create terraform variables
+      - name: Create terraform variables
+        run: |
+          echo "${{ secrets.TF_VARS }}" > terraform.tfvars
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
