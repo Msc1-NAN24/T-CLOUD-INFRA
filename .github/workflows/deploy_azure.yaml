@@ -45,7 +45,8 @@ jobs:
           if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
 
       - name: Generate public key
-        run: ssh-keygen -f ~/.ssh/id_rsa -y > ~/.ssh/id_rsa.pub
+        run: |
+          echo "${{ secrets.SSH_PUB_KEY }}" > ~/.ssh/id_rsa.pub
         shell: bash
 
       # Install the latest version of the Terraform CLI
