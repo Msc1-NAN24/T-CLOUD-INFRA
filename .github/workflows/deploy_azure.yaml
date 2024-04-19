@@ -42,11 +42,6 @@ jobs:
         with:
           terraform_wrapper: false
 
-      # Create terraform variables
-      - name: Create terraform variables
-        run: |
-          echo "${{ secrets.TF_VARS }}" > terraform.tfvars
-
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
         run: terraform init
@@ -62,6 +57,8 @@ jobs:
         id: tf-plan
         run: |
           export exitcode=0
+          echo "${{ secrets.TF_VARS }}" > terraform.tfvars
+          cat terraform.tfvars
           terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
           
           echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
