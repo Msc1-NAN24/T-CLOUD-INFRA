@@ -1,0 +1,31 @@
+replicaCount: 1
+appName: t-clo-app
+
+image:
+  repository: ghcr.io/msc1-nan24/t-clo-app
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+env_app:
+    APP_DEBUG: "true"
+    APP_ENV: "dev"
+    APP_KEY: "base64:DJYTvaRkEZ/YcQsX3TMpB0iCjgme2rhlIOus9A1hnj4="
+    DB_CONNECTION: "mysql"
+    DB_HOST: "db-service"
+    DB_PORT: "3306"
+    DB_DATABASE: "app_database"
+    DB_USERNAME: "app_user"
+    DB_PASSWORD: "app_password"
