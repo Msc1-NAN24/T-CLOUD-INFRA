@@ -32,9 +32,9 @@ resource "azurerm_dev_test_linux_virtual_machine" "worker" {
 
   # Définit l'image de la machine virtuelle
   gallery_image_reference {
-    publisher = "Debian"
-    offer     = "debian-12"
-    sku       = "12"
+    publisher = "canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
     version   = "latest"
   }
 
@@ -54,9 +54,9 @@ resource "azurerm_dev_test_linux_virtual_machine" "control-plan" {
   ssh_key             = file("~/.ssh/id_rsa.pub")
 
   gallery_image_reference {
-    publisher = "Debian"
-    offer     = "debian-12"
-    sku       = "12"
+    publisher = "canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
     version   = "latest"
   }
 
