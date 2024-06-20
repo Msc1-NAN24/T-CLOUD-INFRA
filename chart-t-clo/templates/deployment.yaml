@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-app
+  template:
+    metadata:
+      labels:
+        app: sample-app
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/msc1-nan24/t-clo-app:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: APP_DEBUG
+              value: "true"
+            - name: APP_ENV
+              value: "dev"
+            - name: APP_KEY
+              value: "base64:DJYTvaRkEZ/YcQsX3TMpB0iCjgme2rhlIOus9A1hnj4="
+            - name: DB_CONNECTION
+              value: mysql
+            - name: DB_HOST
+              value: db-service
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_DATABASE
+              value: app_database
+            - name: DB_USERNAME
+              value: app_user
+            - name: DB_PASSWORD
+              value: app_password
