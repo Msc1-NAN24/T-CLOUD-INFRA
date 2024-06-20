@@ -7,6 +7,7 @@
 # Configuration du fournisseur Azure
 provider "azurerm" {
   features {}
+  use_oidc = true
 }
 
 # Définition du groupe de ressources existant
@@ -32,9 +33,9 @@ resource "azurerm_dev_test_linux_virtual_machine" "worker" {
 
   # Définit l'image de la machine virtuelle
   gallery_image_reference {
-    publisher = "canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts"
+    publisher = "Debian"
+    offer     = "debian-12"
+    sku       = "12"
     version   = "latest"
   }
 
@@ -54,9 +55,9 @@ resource "azurerm_dev_test_linux_virtual_machine" "control-plan" {
   ssh_key             = file("~/.ssh/id_rsa.pub")
 
   gallery_image_reference {
-    publisher = "canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts"
+    publisher = "Debian"
+    offer     = "debian-12"
+    sku       = "12"
     version   = "latest"
   }
 

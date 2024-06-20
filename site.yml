@@ -19,6 +19,22 @@
     - role: proxmox_lxc
       when: proxmox_lxc_configure
 
+- name: Install helm if not exists
+  hosts: all
+  tasks:
+    - name: Download HELM
+      become: true
+      unarchive:
+        src: https://get.helm.sh/helm-v3.15.2-linux-amd64.tar.gz
+        dest: /usr/local/bin
+        extra_opts: "--strip-components=1"
+        owner: root
+        group: root
+        mode: 0755
+        remote_src: true
+      args:
+        creates: /usr/local/bin/helm
+
 - name: Prepare k3s nodes
   hosts: k3s_cluster
   gather_facts: true
