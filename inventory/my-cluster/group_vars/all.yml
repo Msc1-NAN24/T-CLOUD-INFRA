@@ -17,7 +17,7 @@ calico_tag: "v3.27.2"        # calico version tag
 
 # uncomment cilium_iface to use cilium cni instead of flannel or calico
 # ensure v4.19.57, v5.1.16, v5.2.0 or more recent kernel
-#cilium_iface: "eth0"
+#ilium_iface: "eth0"
 cilium_mode: "native"        # native when nodes on same subnet or using bgp, else set routed
 cilium_tag: "v1.15.2"        # cilium version tag
 cilium_hubble: true          # enable hubble observability relay and ui
@@ -67,7 +67,6 @@ extra_server_args: >-
   {% endif %}
   --tls-san {{ apiserver_endpoint }}
   --disable servicelb
-  --disable traefik
 
 extra_agent_args: >-
   {{ extra_args }}
@@ -99,7 +98,7 @@ metal_lb_controller_tag_version: "v0.14.3"
 
 # metallb ip range for load balancer
 #metal_lb_ip_range: "192.168.30.80-192.168.30.90"
-metal_lb_ip_range: "10.0.0.10-10.0.0.80"
+metal_lb_ip_range: "10.0.20.10-10.0.20.80"
 
 # Only enable if your nodes are proxmox LXC nodes, make sure to configure your proxmox nodes
 # in your hosts.ini file.

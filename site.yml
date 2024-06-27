@@ -84,3 +84,9 @@
         dest: ./kubeconfig
         flat: true
       when: ansible_hostname == hostvars[groups[group_name_master | default('master')][0]]['ansible_hostname']
+
+- name: Configure ArgoCD
+  hosts: master
+  roles:
+    - role: argocd
+      become: true
