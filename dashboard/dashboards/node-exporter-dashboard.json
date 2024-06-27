@@ -1,0 +1,59 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Node Exporter Dashboard",
+    "uid": "node-exporter-dashboard",
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "5s",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Memory Usage",
+        "targets": [
+          {
+            "expr": "node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100",
+            "format": "time_series",
+            "intervalFactor": 2,
+            "legendFormat": "Available Memory",
+            "refId": "A"
+          }
+        ],
+        "xaxis": {
+          "show": true
+        },
+        "yaxis": {
+          "format": "percent",
+          "show": true
+        }
+      },
+      {
+        "type": "graph",
+        "title": "Disk Usage",
+        "targets": [
+          {
+            "expr": "node_filesystem_avail_bytes / node_filesystem_size_bytes * 100",
+            "format": "time_series",
+            "intervalFactor": 2,
+            "legendFormat": "Available Disk",
+            "refId": "A"
+          }
+        ],
+        "xaxis": {
+          "show": true
+        },
+        "yaxis": {
+          "format": "percent",
+          "show": true
+        }
+      }
+    ],
+    "templating": {
+      "list": []
+    },
+    "annotations": {
+      "list": []
+    }
+  }
+}

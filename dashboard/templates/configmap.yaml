@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  labels:
+    app: {{ include "grafana.name" . }}
+    chart: {{ include "grafana.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  kubernetes-cluster-monitoring.json: |-
+    {{ .Files.Get "dashboards/kubernetes-cluster-monitoring.json" | indent 4 }}
+  node-exporter-dashboard.json: |-
+    {{ .Files.Get "dashboards/node-exporter-dashboard.json" | indent 4 }}
