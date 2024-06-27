@@ -40,7 +40,7 @@ Ansible est utilisé pour automatiser la configuration des machines virtuelles.
 
 ```bash
 # Installation des rôles/jobs/tasks Ansible
-$ ansible-playbook -i inventory.ini playbook.yml
+$ ansible-playbook -i hosts.ini playbook.yml
 ```
 
 ### 3. Github Actions

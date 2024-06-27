@@ -7,6 +7,7 @@
 # Configuration du fournisseur Azure
 provider "azurerm" {
   features {}
+  use_oidc = true
 }
 
 # Définition du groupe de ressources existant
