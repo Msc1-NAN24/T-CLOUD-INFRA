@@ -10,6 +10,12 @@
         msg: >
           "Ansible is out of date. See here for more info: https://docs.technotim.live/posts/ansible-automation/"
 
+- name: Prepare/Add ssh keys to remote hosts
+  hosts: all
+  roles:
+    - role: ssh
+      become: true
+
 - name: Prepare Proxmox cluster
   hosts: proxmox
   gather_facts: true
@@ -85,8 +91,12 @@
         flat: true
       when: ansible_hostname == hostvars[groups[group_name_master | default('master')][0]]['ansible_hostname']
 
-- name: Configure ArgoCD
+- name: Install NGINX
+  hosts: master
+  roles:
+    - role: nginx
+
+- name: Configure ArgoCD and Dependencies
   hosts: master
   roles:
     - role: argocd
-      become: true
