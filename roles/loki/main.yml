@@ -1,0 +1,30 @@
+- name: Deploy Loki to Kubernetes
+  hosts: localhost
+  tasks:
+    - name: Add Loki Helm repository
+      kubernetes:
+        name: loki
+        api_version: v1
+        kind: HelmRepository
+        namespace: monitoring
+        resource_definition:
+          spec:
+            url: https://grafana.github.io/helm-charts
+
+    - name: Deploy Loki using Helm
+      kubernetes:
+        name: loki
+        api_version: v1
+        kind: HelmRelease
+        namespace: monitoring
+        resource_definition:
+          spec:
+            chart:
+              spec:
+                chart: loki
+                version: "3.1.0"  
+                sourceRef:
+                  kind: HelmRepository
+                  name: loki
+            values:
+              
