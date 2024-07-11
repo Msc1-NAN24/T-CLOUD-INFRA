@@ -2,6 +2,11 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    nginx.ingress.kubernetes.io/add-base-url: 'true'
+    nginx.ingress.kubernetes.io/base-url: {{.Values.baseUlr}}
 spec:
   ingressClassName: nginx
   rules:

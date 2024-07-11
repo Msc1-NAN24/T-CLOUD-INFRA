@@ -1,10 +1,10 @@
 mysql:
-  host: ""
-  port: ""
-  db: ""
-  username: ""
-  password: ""
-appKey: ""
+  host: "localhost"
+  port: 21860
+  db: "db"
+  username: "admin"
+  password: "password"
+appKey: "base64:D"
 baseUlr: "/app"
-port: '80'
-debug: 'true'
+port: 80
+debug: "true"
