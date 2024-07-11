@@ -1,0 +1,26 @@
+project: default
+source:
+  repoURL: 'git@github.com:Msc1-NAN24/T-CLOUD-INFRA.git'
+  path: chart-t-clo
+  targetRevision: HEAD
+  helm:
+    valueFiles:
+      - values.yaml
+    parameters:
+      - name: mysql.db
+        value: '"defaultdb"'
+      - name: mysql.host
+        value: '"mysql-81be502-nicolas-bd8b.e.aivencloud.com"'
+      - name: mysql.password
+        value: '"AVNS_W3YQ7hYKDdMO-7UEveh"'
+      - name: mysql.port
+        value: '"21860"'
+      - name: mysql.username
+        value: '"avnadmin"'
+      - name: appKey
+        value: '"base64:DJYTvaRkEZ/YcQsX3TMpB0iCjgme2rhlIOus9A1hnj4="'
+destination:
+  namespace: apps
+  name: in-cluster
+syncPolicy:
+  automated: {}

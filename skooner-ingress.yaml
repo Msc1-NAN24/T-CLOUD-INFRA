@@ -1,0 +1,24 @@
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: skooner-ingress
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - control-plane-vm-iac.westeurope.cloudapp.azure.com
+      secretName: skooner-tls
+  rules:
+    - host: control-plane-vm-iac.westeurope.cloudapp.azure.com
+      http:
+        paths:
+          - path: /skooner
+            backend:
+              service:
+                name: my-skooner-clusterip
+                port:
+                  number: 8080
+            pathType: ImplementationSpecific

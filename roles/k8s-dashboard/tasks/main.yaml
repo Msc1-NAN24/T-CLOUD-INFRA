@@ -1,0 +1,27 @@
+---
+- name: Install K8S Dashboard
+  shell: sudo kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
+
+- name: Copy K8S ingress file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/k8s-dashboard-nginx-ingress.yaml"
+    dest: "/tmp/k8s-dashboard-nginx-ingress.yaml"
+
+- name: Copy K8S ingress file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/k8s-dashboard-clusterrolebiding.yaml"
+    dest: "/tmp/k8s-dashboard-clusterrolebiding-ingress.yaml"
+
+- name: Copy K8S ingress file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/k8s-dashboard-serviceaccount.yaml"
+    dest: "/tmp/k8s-dashboard-nginx-serviceaccount.yaml"
+
+- name: Install Service Account and Cluster role for K8S Dashboard
+  shell: |
+    sudo kubectl apply -f /tmp/k8s-dashboard-clusterrolebiding-ingress.yaml
+    sudo kubectl apply -f /tmp/k8s-dashboard-nginx-serviceaccount.yaml
+    sudo kubectl apply -f /tmp/k8s-dashboard-nginx-ingress.yaml
+
+- name: Create Service Account for K8S Dashboard and token
+  shell: sudo kubectl -n kubernetes-dashboard create token admin-user

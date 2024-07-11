@@ -9,12 +9,12 @@ spec:
       http:
         paths:
           - pathType: Prefix
-            path: "/"
+            path: {{.Values.baseUlr}}
             backend:
               service:
                 name: app-service
                 port:
-                  number: 80
+                  number: {{ .Values.port }}
   tls:
     - hosts:
         - control-plane-vm-iac.westeurope.cloudapp.azure.com
