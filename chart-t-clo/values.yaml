@@ -6,5 +6,5 @@ mysql:
   password: ""
 appKey: ""
 baseUlr: "/app"
-port: 80
-debug: true
+port: '80'
+debug: 'true'
