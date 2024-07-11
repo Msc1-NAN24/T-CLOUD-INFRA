@@ -3,8 +3,10 @@ kind: Ingress
 metadata:
   name: app-ingress
 spec:
+  ingressClassName: nginx
   rules:
-    - http:
+    - host: control-plane-vm-iac.westeurope.cloudapp.azure.com
+      http:
         paths:
           - pathType: Prefix
             path: "/"
@@ -13,3 +15,7 @@ spec:
                 name: app-service
                 port:
                   number: 80
+  tls:
+    - hosts:
+        - control-plane-vm-iac.westeurope.cloudapp.azure.com
+      secretName: app-server-tls

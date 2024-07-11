@@ -19,20 +19,20 @@ spec:
             - containerPort: 80
           env:
             - name: APP_DEBUG
-              value: "true"
+              value: "false"
             - name: APP_ENV
-              value: "dev"
+              value: "production"
             - name: APP_KEY
-              value: "base64:DJYTvaRkEZ/YcQsX3TMpB0iCjgme2rhlIOus9A1hnj4="
+              value: {{ .Values.appKey }}
             - name: DB_CONNECTION
               value: mysql
             - name: DB_HOST
-              value: db-service
+              value: {{ .Values.mysql.host }}
             - name: DB_PORT
-              value: "3306"
+              value: {{ .Values.mysql.port }}
             - name: DB_DATABASE
-              value: app_database
+              value: {{ .Values.mysql.db }}
             - name: DB_USERNAME
-              value: app_user
+              value: {{ .Values.mysql.username }}
             - name: DB_PASSWORD
-              value: app_password
+              value: {{ .Values.mysql.password }}
