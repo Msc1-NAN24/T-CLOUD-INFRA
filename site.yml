@@ -100,3 +100,10 @@
   hosts: master
   roles:
     - role: argocd
+      become: true
+
+- name: Install kube-prometheus on the cluster
+  hosts: master
+  roles:
+    - role: kube_prometheus
+      become: true
