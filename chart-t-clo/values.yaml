@@ -4,7 +4,6 @@ mysql:
   db: "db"
   username: "admin"
   password: "password"
-appKey: "base64:D"
-baseUlr: "/app"
-port: 80
+appKey: ""
+baseUrl: "/app"
 debug: "true"

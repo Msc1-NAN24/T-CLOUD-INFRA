@@ -6,7 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/use-regex: 'true'
     nginx.ingress.kubernetes.io/add-base-url: 'true'
-    nginx.ingress.kubernetes.io/base-url: {{.Values.baseUlr}}
+    nginx.ingress.kubernetes.io/base-url: {{.Values.baseUrl}}
 spec:
   ingressClassName: nginx
   rules:
@@ -14,12 +14,12 @@ spec:
       http:
         paths:
           - pathType: Prefix
-            path: {{.Values.baseUlr}}
+            path: {{.Values.baseUrl}}
             backend:
               service:
                 name: app-service
                 port:
-                  number: {{ .Values.port }}
+                  number: 80
   tls:
     - hosts:
         - control-plane-vm-iac.westeurope.cloudapp.azure.com
