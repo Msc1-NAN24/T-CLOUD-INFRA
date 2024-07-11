@@ -1,0 +1,9 @@
+---
+- name: Install NGINX
+  hosts: master
+  roles:
+    - role: nginx
+- name: Configure ArgoCD and Dependencies
+  hosts: master
+  roles:
+    - role: argocd

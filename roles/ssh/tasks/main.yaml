@@ -1,0 +1,23 @@
+- name: Elie SSH KEY
+  ansible.posix.authorized_key:
+    user: cloudtoto
+    state: present
+    key: "{{ lookup('file', './elie.pub') }}"
+
+#- name: Maël SSH KEY (1/2)
+    #  ansible.posix.authorized_key:
+    #user: cloudtoto
+    #state: present
+    #key: "{{ lookup('file', './mael_1.pub') }}"
+
+  #- name: Maël SSH KEY (2/2)
+    #ansible.posix.authorized_key:
+    #user: cloudtoto
+    #state: present
+    #key: "{{ lookup('file', './mael_2.pub') }}"
+
+- name: Nicolas SSH KEY
+  ansible.posix.authorized_key:
+    user: cloudtoto
+    state: present
+    key: "{{ lookup('file', './nico.pub') }}"
