@@ -10,15 +10,15 @@ source:
       - name: mysql.db
         value: '"defaultdb"'
       - name: mysql.host
-        value: '"mysql-81be502-nicolas-bd8b.e.aivencloud.com"'
+        value: '""'
       - name: mysql.password
-        value: '"AVNS_W3YQ7hYKDdMO-7UEveh"'
+        value: '""'
       - name: mysql.port
         value: '"21860"'
       - name: mysql.username
         value: '"avnadmin"'
       - name: appKey
-        value: '"base64:DJYTvaRkEZ/YcQsX3TMpB0iCjgme2rhlIOus9A1hnj4="'
+        value: '""'
 destination:
   namespace: apps
   name: in-cluster
