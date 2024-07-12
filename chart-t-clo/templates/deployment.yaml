@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: ghcr.io/msc1-nan24/t-clo-app:latest
+          image: ghcr.io/msc1-nan24/t-clo-app:1.0.3
           ports:
             - containerPort: 80
           env:
