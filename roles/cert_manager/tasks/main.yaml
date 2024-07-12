@@ -1,0 +1,22 @@
+---
+- name: Helm repo add dependencies
+  shell: |
+    helm repo add jetstack https://charts.jetstack.io
+    helm repo update
+
+- name: Install CertManager for SSL support
+  shell: helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
+
+- name: Copy Staging Issuer file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/staging_issuer.yaml"
+    dest: "/tmp/staging_issuer.yaml"
+- name: Copy Prod Issuer file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/prod_issuer.yaml"
+    dest: "/tmp/prod_issuer.yaml"
+
+- name: Install Issuers
+  shell: |
+    sudo kubectl apply -f /tmp/staging_issuer.yaml
+    sudo kubectl apply -f /tmp/prod_issuer.yaml

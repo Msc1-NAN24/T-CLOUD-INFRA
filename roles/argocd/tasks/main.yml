@@ -1,28 +1,7 @@
 - name: Helm repo add dependencies
   shell: |
     helm repo add argo https://argoproj.github.io/argo-helm
-    helm repo add jetstack https://charts.jetstack.io
-    helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
     helm repo update
-
-# CertManager
-#
-#
-- name: Install CertManager for SSL support
-  shell: helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
-
-- name: Copy Staging Issuer file
-  ansible.builtin.copy:
-    src: "{{ playbook_dir }}/staging_issuer.yaml"
-    dest: "/tmp/staging_issuer.yaml"
-- name: Copy Prod Issuer file
-  ansible.builtin.copy:
-    src: "{{ playbook_dir }}/prod_issuer.yaml"
-    dest: "/tmp/prod_issuer.yaml"
-
-- name: Install Issuers
-  shell: |
-    sudo kubectl apply -f /tmp/prod_issuer.yaml
 
 # ArgoCD
 #
@@ -37,7 +16,6 @@
     src: "{{ playbook_dir }}/argocd-nginx-ingress.yaml"
     dest: "/tmp/argocd-nginx-ingress.yaml"
 
-
 - name: Install with Helm
   shell: helm upgrade --install --create-namespace -n argocd argocd argo/argo-cd -f /tmp/argocd-values.yaml
 
@@ -45,18 +23,41 @@
   shell: |
     sudo kubectl apply -f /tmp/argocd-nginx-ingress.yaml
 
-
-- name: Change All service type to LoadBalancer
-  shell: |
-    sudo kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
-    
-- name: Start port forwarding for NGINX Ingress Controller LoadBalancer Service
-  shell: |
-    sudo kubectl port-forward service/ingress-nginx-controller-loadbalancer -n ingress-nginx 80:80 --address 0.0.0.0 2>&1 >/dev/null &
-    sudo kubectl port-forward service/ingress-nginx-controller-loadbalancer -n ingress-nginx 443:443 --address 0.0.0.0 2>&1 >/dev/null &
+#- name: Change All service type to LoadBalancer
+#  shell: |
+#    sudo kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
 - name: Install ArgoCD CLI
   shell: |
     curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
     sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
     rm argocd-linux-amd64
+
+- name: Start port forwarding for NGINX Ingress Controller LoadBalancer Service
+  shell: |
+    sudo kubectl port-forward service/ingress-nginx-controller-loadbalancer -n ingress-nginx 80:80 --address 0.0.0.0 2>&1 >/dev/null &
+    sudo kubectl port-forward service/ingress-nginx-controller-loadbalancer -n ingress-nginx 443:443 --address 0.0.0.0 2>&1 >/dev/null &
+
+- name: Copy ArgoCD ingress file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/argocd/app-applicationset.yaml"
+    dest: "/tmp/app-applicationset.yaml"
+
+- name: Deploy APP to ArgoCD
+  shell: sudo kubectl apply -f /tmp/app-applicationset.yaml
+
+
+- name: Sleep for 10 seconds
+  ansible.builtin.wait_for:
+    timeout: 10
+  delegate_to: localhost
+
+- name: Get ArgoCD password
+  shell: sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+  register: argocd_password
+
+- name: Save ArgoCD token
+  local_action:
+    module: copy
+    content: "{{ argocd_password.stdout }}"
+    dest: "{{ playbook_dir }}/credentials/argocd_password.txt"
