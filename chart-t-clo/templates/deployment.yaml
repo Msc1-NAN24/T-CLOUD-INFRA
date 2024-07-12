@@ -38,5 +38,3 @@ spec:
               value: "{{ .Values.mysql.password }}"
             - name: APP_URL
               value: "APP_URL=http://localhost/app"
-"
-
