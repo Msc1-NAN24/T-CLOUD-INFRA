@@ -5,5 +5,5 @@ mysql:
   username: "admin"
   password: "password"
 appKey: ""
-baseUrl: "/app"
+baseUrl: "/app(/|$)(.*)"
 debug: "true"
