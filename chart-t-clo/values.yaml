@@ -7,3 +7,8 @@ mysql:
 appKey: ""
 baseUrl: "/app(/|$)(.*)"
 debug: "true"
+replicaCount: "2"
+cpuLimit: "500m"
+cpuRequest: "250m"
+memoryLimit: "128Mi"
+memoryRequest: "64Mi"
