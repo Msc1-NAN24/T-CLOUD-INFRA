@@ -1,5 +1,5 @@
 ---
-- name: Install NGINX
+- name: Install vault
   hosts: master
   roles:
-    - role: k8s-dashboard
+    - role: vault

@@ -1,0 +1,13 @@
+- name: Helm repo add dependencies
+  shell: |
+    helm repo add hashicorp https://helm.releases.hashicorp.com
+    helm repo update
+    
+
+- name: Copy Vault values file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/vault-values.yaml"
+    dest: "/tmp/vault-values.yaml"
+
+- name: Install with Helm
+  shell: helm upgrade --install vault -n vault --create-namespace hashicorp/vault -f /tmp/vault-values.yaml

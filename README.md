@@ -54,3 +54,17 @@ Github Actions est utilisé pour automatiser le déploiement de l'infrastructure
 La CI est automatiquement déclenchée lors d'un push sur la branche `main`.
 
 ###
+
+
+## Cluster
+
+LoadBalancer: MetalLB
+Ingress Controller: Nginx
+Monitoring: Prometheus/Grafana
+Logging: Loki
+GitOps: ArgoCD
+SSL: Cert-Manager
+CNI: Flannel
+Dashboard: Kubernetes Dashboard
+
+```

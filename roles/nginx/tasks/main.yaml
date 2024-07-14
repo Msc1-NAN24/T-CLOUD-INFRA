@@ -23,7 +23,7 @@
 # sudo kubectl port-forward service/ingress-nginx-controller-loadbalancer -n ingress-nginx 443:443 --address 0.0.0.0 2>&1 >/dev/null &
 
 - name: Change default SSL issuer for NGINX
-  shell: sudo kubectl patch deployment "ingress-nginx-controller" -n "ingress-nginx" --type "json" --patch '[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--default-ssl-certificate=cert-manager/letsencrypt-prod"}]'
+  shell: sudo kubectl patch deployment "ingress-nginx-controller" -n "ingress-nginx" --type "json" --patch '[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--default-ssl-certificate=cert_manager/letsencrypt-prod"}]'
 
 # 7539
 # 7568

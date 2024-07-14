@@ -1,0 +1,7 @@
+- name: Helm repo add dependencies
+  shell: |
+    helm repo add lensesio https://helm.repo.lenses.io/
+    helm repo update
+
+- name: Install with Helm
+  shell: helm upgrade --install --create-namespace -n lenses lenses lensesio/lenses -f /tmp/lenses-values.yaml

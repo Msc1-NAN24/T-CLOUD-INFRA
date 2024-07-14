@@ -1,6 +1,11 @@
 ---
+- name: Helm repo add dependencies
+  shell: |
+    helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+    helm repo update
+
 - name: Install K8S Dashboard
-  shell: sudo kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
+  shell: helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
 
 - name: Copy K8S ingress file
   ansible.builtin.copy:
@@ -15,13 +20,20 @@
 - name: Copy K8S ingress file
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/k8s-dashboard-serviceaccount.yaml"
-    dest: "/tmp/k8s-dashboard-nginx-serviceaccount.yaml"
+    dest: "/tmp/k8s-dashboard-serviceaccount.yaml"
 
 - name: Install Service Account and Cluster role for K8S Dashboard
   shell: |
+    sudo kubectl apply -f /tmp/k8s-dashboard-serviceaccount.yaml
     sudo kubectl apply -f /tmp/k8s-dashboard-clusterrolebiding-ingress.yaml
-    sudo kubectl apply -f /tmp/k8s-dashboard-nginx-serviceaccount.yaml
     sudo kubectl apply -f /tmp/k8s-dashboard-nginx-ingress.yaml
 
 - name: Create Service Account for K8S Dashboard and token
   shell: sudo kubectl -n kubernetes-dashboard create token admin-user
+  register: k8s_dashboard_token
+
+- name: Save K8S Dashboard token
+  local_action:
+    module: copy
+    content: "{{ k8s_dashboard_token.stdout }}"
+    dest: "{{ playbook_dir }}/credentials/k8s_dashboard_token.txt"

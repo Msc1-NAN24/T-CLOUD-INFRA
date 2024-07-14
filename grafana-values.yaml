@@ -1,0 +1,45 @@
+grafana:
+  ingress:
+    ## If true, Grafana Ingress will be created
+    ##
+    enabled: true
+
+    ## IngressClassName for Grafana Ingress.
+    ## Should be provided if Ingress is enable.
+    ##
+    ingressClassName: nginx
+
+    ## Annotations for Grafana Ingress
+    ##
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+
+    ## Labels to be added to the Ingress
+    ##
+    labels: {}
+
+    ## Hostnames.
+    ## Must be provided if Ingress is enable.
+    ##
+    hosts:
+
+
+    ## Path for grafana ingress
+    path: /dashboard
+
+    ## TLS configuration for grafana Ingress
+    ## Secret must be manually created in the namespace
+    ##
+    tls:
+      - secretName: "grafana-tls"
+        hosts:
+          - control-plane-vm-iac.westeurope.cloudapp.azure.com
+
+  grafana.ini:
+    security:
+      cookie_secure: false
+    server:
+      domain: control-plane-vm-iac.westeurope.cloudapp.azure.com
+      protocol: http
+      root_url: "%(protocol)s://%(domain)s:%(http_port)s/dashboard/"
+      serve_from_sub_path: true
