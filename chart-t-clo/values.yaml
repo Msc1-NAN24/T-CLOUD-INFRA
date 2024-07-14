@@ -12,3 +12,8 @@ cpuLimit: "500m"
 cpuRequest: "250m"
 memoryLimit: "128Mi"
 memoryRequest: "64Mi"
+hpa:
+  minReplicas: 2
+  maxReplicas: 10
+  cpuUtilization: 80
+  memoryUtilization: 80
