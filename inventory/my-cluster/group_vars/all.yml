@@ -36,7 +36,7 @@ cilium_bgp_lb_cidr: "192.168.31.0/24"   # cidr for cilium loadbalancer ipam
 
 # apiserver_endpoint is virtual ip-address which will be configured on each master
 #apiserver_endpoint: "192.168.30.222"
-apiserver_endpoint: "10.0.0.4"
+apiserver_endpoint: "10.0.0.5"
 
 # k3s_token is required  masters can talk together securely
 # this token should be alpha numeric only

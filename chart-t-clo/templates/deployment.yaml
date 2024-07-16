@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: app-deployment
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: sample-app
@@ -14,7 +14,14 @@ spec:
     spec:
       containers:
         - name: app
-          image: ghcr.io/msc1-nan24/t-clo-app:1.0.3
+          image: "ghcr.io/msc1-nan24/t-clo-app:{{.Chart.AppVersion}}"
+          resources:
+            requests:
+              memory: {{ .Values.memoryRequest }}
+              cpu: {{ .Values.cpuRequest }}
+            limits:
+              memory: {{ .Values.memoryLimit }}
+              cpu: {{ .Values.cpuLimit }}
           ports:
             - containerPort: 80
           env:

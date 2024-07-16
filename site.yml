@@ -96,14 +96,22 @@
   roles:
     - role: nginx
 
-- name: Configure ArgoCD and Dependencies
+- name: Install CertManager for SSL support
   hosts: master
   roles:
-    - role: argocd
-      become: true
+    - role: cert_manager
 
 - name: Install kube-prometheus on the cluster
   hosts: master
   roles:
     - role: kube_prometheus
-      become: true
+
+- name: Configure ArgoCD and Dependencies
+  hosts: master
+  roles:
+    - role: argocd
+
+- name: Install K8S Dashboard
+  hosts: master
+  roles:
+    - role: k8s_dashboard

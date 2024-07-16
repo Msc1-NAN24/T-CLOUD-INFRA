@@ -1,6 +1,10 @@
 ---
+- name: Install vault
 - name: Install and configure Loki for Kubernetes logging
   hosts: master
+  roles:
+    - role: vault
+
 
   vars:
     loki_namespace: "monitoring"
