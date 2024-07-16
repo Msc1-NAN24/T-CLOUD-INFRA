@@ -1,30 +1,59 @@
-- name: Deploy Loki to Kubernetes
-  hosts: localhost
+---
+- name: Install and configure Loki for Kubernetes logging
+  hosts: master
+
+  vars:
+    loki_namespace: "monitoring"
+    loki_release_name: "loki"
+    loki_chart_version: "6.6.6"
+    loki_values_file: "loki-values.yaml"
+    kubeconfig: "/home/cloudtoto/.kube/config"
+
   tasks:
-    - name: Add Loki Helm repository
-      kubernetes:
-        name: loki
-        api_version: v1
-        kind: HelmRepository
-        namespace: monitoring
-        resource_definition:
-          spec:
-            url: https://grafana.github.io/helm-charts
+    - name: Get Kubernetes version
+      command: kubectl --kubeconfig={{ kubeconfig }} version
+      register: k8s_version
+
+    - name: Display Kubernetes version
+      debug:
+        var: k8s_version.stdout_lines
+
+    - name: Get node information
+      command: kubectl --kubeconfig={{ kubeconfig }} get nodes -o wide
+      register: node_info
+
+    - name: Display node information
+      debug:
+        var: node_info.stdout_lines
+
+    - name: Add Grafana Helm repository
+      command: helm repo add grafana https://grafana.github.io/helm-charts
+      register: helm_repo_add
+      changed_when: "'has been added to your repositories' in helm_repo_add.stdout"
+
+    - name: Update Helm repositories
+      command: helm repo update
+      register: helm_repo_update
+      changed_when: "'Update Complete' in helm_repo_update.stdout"
+
+    - name: Create namespace for Loki
+      command: kubectl --kubeconfig={{ kubeconfig }} create namespace {{ loki_namespace }}
+      register: create_namespace
+      failed_when: 
+        - create_namespace.rc != 0
+        - "'AlreadyExists' not in create_namespace.stderr"
+      changed_when: create_namespace.rc == 0
+
+    - name: Copy Loki values file
+      copy:
+        src: ./loki-values.yaml
+        dest: /home/cloudtoto/loki-values.yaml
 
     - name: Deploy Loki using Helm
-      kubernetes:
-        name: loki
-        api_version: v1
-        kind: HelmRelease
-        namespace: monitoring
-        resource_definition:
-          spec:
-            chart:
-              spec:
-                chart: loki
-                version: "3.1.0"  
-                sourceRef:
-                  kind: HelmRepository
-                  name: loki
-            values:
-              
+      command: >
+        helm upgrade --install loki grafana/loki
+        --namespace {{ loki_namespace }}
+        --version {{ loki_chart_version }}
+        -f /home/cloudtoto/loki-values.yaml
+      register: helm_install
+      changed_when: "'STATUS: deployed' in helm_install.stdout"
