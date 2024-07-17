@@ -1,5 +1,5 @@
 ---
-- name: Install and configure Loki for Kubernetes logging
+- name: Install and configure Loki and Promtail for Kubernetes logging
   hosts: master
 
   vars:
@@ -7,53 +7,158 @@
     loki_release_name: "loki"
     loki_chart_version: "6.6.6"
     loki_values_file: "loki-values.yaml"
+    promtail_release_name: "promtail"
+    promtail_chart_version: "6.15.3"  # Ajustez selon la version compatible avec Loki
     kubeconfig: "/home/cloudtoto/.kube/config"
 
   tasks:
-    - name: Get Kubernetes version
-      command: kubectl --kubeconfig={{ kubeconfig }} version
-      register: k8s_version
+    # - name: Get Kubernetes version
+    #   command: kubectl --kubeconfig={{ kubeconfig }} version
+    #   register: k8s_version
 
-    - name: Display Kubernetes version
+    # - name: Display Kubernetes version
+    #   debug:
+    #     var: k8s_version.stdout_lines
+
+    # - name: Get node information
+    #   command: kubectl --kubeconfig={{ kubeconfig }} get nodes -o wide
+    #   register: node_info
+
+    # - name: Display node information
+    #   debug:
+    #     var: node_info.stdout_lines
+
+    # - name: Add Grafana Helm repository
+    #   command: helm repo add grafana https://grafana.github.io/helm-charts
+    #   register: helm_repo_add
+    #   changed_when: "'has been added to your repositories' in helm_repo_add.stdout"
+
+    # - name: Update Helm repositories
+    #   command: helm repo update
+    #   register: helm_repo_update
+    #   changed_when: "'Update Complete' in helm_repo_update.stdout"
+
+    # - name: Create namespace for Loki and Promtail
+    #   command: kubectl --kubeconfig={{ kubeconfig }} create namespace {{ loki_namespace }}
+    #   register: create_namespace
+    #   failed_when:
+    #     - create_namespace.rc != 0
+    #     - "'AlreadyExists' not in create_namespace.stderr"
+    #   changed_when: create_namespace.rc == 0
+
+    # - name: Copy Loki values file
+    #   copy:
+    #     src: ./loki-values.yaml
+    #     dest: /home/cloudtoto/loki-values.yaml
+
+    # - name: Deploy Loki using Helm
+    #   command: >
+    #     helm upgrade --install {{ loki_release_name }} grafana/loki
+    #     --namespace {{ loki_namespace }}
+    #     --version {{ loki_chart_version }}
+    #     -f /home/cloudtoto/loki-values.yaml
+    #   register: helm_install_loki
+    #   changed_when: "'STATUS: deployed' in helm_install_loki.stdout"
+
+    # - name: Wait for Loki pods to be ready
+    #   command: >
+    #     kubectl --kubeconfig={{ kubeconfig }} wait --for=condition=ready pod 
+    #     -l app.kubernetes.io/name=loki
+    #     -n {{ loki_namespace }}
+    #     --timeout=300s
+    #   register: loki_pods_ready
+    #   changed_when: false
+
+    # - name: Get Loki service details
+    #   command: >
+    #     kubectl --kubeconfig={{ kubeconfig }} get service {{ loki_release_name }} 
+    #     -n {{ loki_namespace }} 
+    #     -o jsonpath='{.spec.clusterIP}'
+    #   register: loki_service_ip
+
+    # - name: Create Promtail values file
+    #   copy:
+    #     content: |
+    #       config:
+    #         lokiAddress: "http://{{ loki_service_ip.stdout }}:3100/loki/api/v1/push"
+    #     dest: /home/cloudtoto/promtail-values.yaml
+
+    # - name: Deploy Promtail using Helm
+    #   command: >
+    #     helm upgrade --install {{ promtail_release_name }} grafana/promtail
+    #     --namespace {{ loki_namespace }}
+    #     --version {{ promtail_chart_version }}
+    #     -f /home/cloudtoto/promtail-values.yaml
+    #   register: helm_install_promtail
+    #   changed_when: "'STATUS: deployed' in helm_install_promtail.stdout"
+
+    # - name: Wait for Promtail pods to be ready
+    #   command: >
+    #     kubectl --kubeconfig={{ kubeconfig }} wait --for=condition=ready pod 
+    #     -l app.kubernetes.io/name=promtail
+    #     -n {{ loki_namespace }}
+    #     --timeout=300s
+    #   register: promtail_pods_ready
+    #   changed_when: false
+
+    # - name: Get Loki service IP
+    #   command: kubectl --kubeconfig={{ kubeconfig }} get service loki -n {{ loki_namespace }} -o jsonpath='{.spec.clusterIP}'
+    #   register: loki_service_ip_result
+
+    # - name: Set Loki service IP
+    #   set_fact:
+    #     loki_service_ip: "{{ loki_service_ip_result.stdout }}"
+
+    # - name: Get existing Grafana ConfigMap
+    #   command: kubectl --kubeconfig={{ kubeconfig }} get configmap kube-prometheus-stack-grafana -n {{ loki_namespace }} -o yaml
+    #   register: grafana_configmap
+
+    # - name: Add Loki datasource to Grafana ConfigMap
+    #   command: >
+    #     kubectl --kubeconfig={{ kubeconfig }} patch configmap kube-prometheus-stack-grafana -n {{ loki_namespace }} --type=merge -p '
+    #     {"data": {"loki-datasource.yaml": "apiVersion: 1\ndatasources:\n- name: Loki\n  type: loki\n  access: proxy\n  url: \"http://loki-gateway.monitoring.svc.cluster.local\"\n  version: 1\n  editable: false\n  jsonData:\n    httpHeaderName1: \"X-Scope-OrgID\"\n  secureJsonData:\n    httpHeaderValue1: \"tenet1\""}}'
+    #   register: grafana_configmap_patched
+
+    # - name: Get current Grafana replicas
+    #   command: kubectl --kubeconfig={{ kubeconfig }} get deployment kube-prometheus-stack-grafana -n {{ loki_namespace }} -o jsonpath='{.spec.replicas}'
+    #   register: grafana_replicas
+
+    # - name: Restart Grafana pod to apply new datasource
+    #   command: kubectl --kubeconfig={{ kubeconfig }} rollout restart deployment kube-prometheus-stack-grafana -n {{ loki_namespace }}
+    #   when: grafana_configmap_patched.changed
+
+    # - name: Wait for Grafana rollout to complete
+    #   command: kubectl --kubeconfig={{ kubeconfig }} rollout status deployment kube-prometheus-stack-grafana -n {{ loki_namespace }} --timeout=300s
+    #   when: grafana_configmap_patched.changed
+
+    - name: Verify Loki datasource in Grafana
+      command: kubectl --kubeconfig={{ kubeconfig }} get configmap kube-prometheus-stack-grafana -n {{ loki_namespace }} -o jsonpath='{.data.loki-datasource\.yaml}'
+      register: loki_datasource_check
+
+    - name: Display Loki datasource configuration
       debug:
-        var: k8s_version.stdout_lines
+        var: loki_datasource_check.stdout
 
-    - name: Get node information
-      command: kubectl --kubeconfig={{ kubeconfig }} get nodes -o wide
-      register: node_info
+    - name: Check Grafana logs for any issues
+      command: kubectl --kubeconfig={{ kubeconfig }} logs -l app.kubernetes.io/name=grafana -n {{ loki_namespace }} --tail=50
+      register: grafana_logs
 
-    - name: Display node information
+    - name: Display Grafana logs
       debug:
-        var: node_info.stdout_lines
+        var: grafana_logs.stdout_lines
+    
+    - name: Check if Loki datasource file is mounted
+      command: kubectl --kubeconfig={{ kubeconfig }} exec -n {{ loki_namespace }} deployment/kube-prometheus-stack-grafana -- ls /etc/grafana/provisioning/datasources/
+      register: datasource_files
 
-    - name: Add Grafana Helm repository
-      command: helm repo add grafana https://grafana.github.io/helm-charts
-      register: helm_repo_add
-      changed_when: "'has been added to your repositories' in helm_repo_add.stdout"
+    - name: Display datasource files
+      debug:
+        var: datasource_files.stdout_lines
 
-    - name: Update Helm repositories
-      command: helm repo update
-      register: helm_repo_update
-      changed_when: "'Update Complete' in helm_repo_update.stdout"
+    - name: Check content of datasource.yaml
+      command: kubectl --kubeconfig={{ kubeconfig }} exec -n {{ loki_namespace }} deployment/kube-prometheus-stack-grafana -- cat /etc/grafana/provisioning/datasources/datasource.yaml
+      register: datasource_content
 
-    - name: Create namespace for Loki
-      command: kubectl --kubeconfig={{ kubeconfig }} create namespace {{ loki_namespace }}
-      register: create_namespace
-      failed_when: 
-        - create_namespace.rc != 0
-        - "'AlreadyExists' not in create_namespace.stderr"
-      changed_when: create_namespace.rc == 0
-
-    - name: Copy Loki values file
-      copy:
-        src: ./loki-values.yaml
-        dest: /home/cloudtoto/loki-values.yaml
-
-    - name: Deploy Loki using Helm
-      command: >
-        helm upgrade --install loki grafana/loki
-        --namespace {{ loki_namespace }}
-        --version {{ loki_chart_version }}
-        -f /home/cloudtoto/loki-values.yaml
-      register: helm_install
-      changed_when: "'STATUS: deployed' in helm_install.stdout"
+    - name: Display datasource content
+      debug:
+        var: datasource_content.stdout_lines
