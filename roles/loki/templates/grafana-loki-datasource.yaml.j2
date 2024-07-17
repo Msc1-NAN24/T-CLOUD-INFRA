@@ -1,9 +1,7 @@
-apiVersion: 1
-datasources:
 - name: Loki
   type: loki
   access: proxy
-  url: "http://loki-gateway.monitoring.svc.cluster.local"
+  url: http://loki-gateway.{{ loki_namespace }}.svc.cluster.local
   version: 1
   editable: false
   jsonData:

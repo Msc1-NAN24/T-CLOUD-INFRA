@@ -43,3 +43,23 @@ grafana:
       protocol: http
       root_url: "%(protocol)s://%(domain)s:%(http_port)s/dashboard/"
       serve_from_sub_path: true
+  
+  sidecar:
+    datasources:
+      enabled: true
+
+  # Configuration additionnelle pour Loki
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki-gateway.monitoring.svc.cluster.local
+      version: 1
+      editable: false
+      jsonData:
+        httpHeaderName1: "X-Scope-OrgID"
+      secureJsonData:
+        httpHeaderValue1: "tenet1"
+
+loki:
+  isDefault: false

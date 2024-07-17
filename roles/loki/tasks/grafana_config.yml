@@ -1,50 +1,66 @@
 ---
-- name: Get existing Grafana ConfigMap
+# - name: Add Loki datasource directly to Grafana
+#   shell: |
+#     kubectl --kubeconfig={{ kubeconfig }} exec -n {{ loki_namespace }} deployment/kube-prometheus-stack-grafana -- /bin/sh -c "cat << EOF >> /etc/grafana/provisioning/datasources/datasource.yaml
+#     {{ lookup('template', 'grafana-loki-datasource.yaml.j2') }}
+#     EOF"
+
+- name: Get current Grafana ConfigMap
   command: kubectl --kubeconfig={{ kubeconfig }} get configmap kube-prometheus-stack-grafana -n {{ loki_namespace }} -o yaml
   register: grafana_configmap
 
-- name: Add Loki datasource to Grafana ConfigMap
+- name: Create updated ConfigMap content
+  set_fact:
+    updated_configmap: "{{ grafana_configmap.stdout | from_yaml | combine({'data': {'datasource.yaml': lookup('template', 'grafana-loki-datasource.yaml.j2')}}, recursive=True) }}"
+
+- name: Apply updated Grafana ConfigMap
+  command: kubectl --kubeconfig={{ kubeconfig }} apply -f -
+  args:
+    stdin: "{{ updated_configmap | to_yaml }}"
+
+- name: Verify datasource configuration
   command: >
-    kubectl --kubeconfig={{ kubeconfig }} patch configmap kube-prometheus-stack-grafana -n {{ loki_namespace }} --type=merge -p '
-    {"data": {"loki-datasource.yaml": "{{ lookup('template', 'grafana-loki-datasource.yaml.j2') | to_json }}"}}'
-  register: grafana_configmap_patched
+    kubectl --kubeconfig={{ kubeconfig }} exec -n {{ loki_namespace }} deployment/kube-prometheus-stack-grafana 
+    -- cat /etc/grafana/provisioning/datasources/datasource.yaml
+  register: datasource_config
+
+- name: Display datasource configuration
+  debug:
+    var: datasource_config.stdout_lines
 
 - name: Restart Grafana pod to apply new datasource
   command: kubectl --kubeconfig={{ kubeconfig }} rollout restart deployment kube-prometheus-stack-grafana -n {{ loki_namespace }}
-  when: grafana_configmap_patched.changed
 
 - name: Wait for Grafana rollout to complete
   command: kubectl --kubeconfig={{ kubeconfig }} rollout status deployment kube-prometheus-stack-grafana -n {{ loki_namespace }} --timeout=300s
-  when: grafana_configmap_patched.changed
 
-- name: Verify Loki datasource in Grafana
-  command: kubectl --kubeconfig={{ kubeconfig }} get configmap kube-prometheus-stack-grafana -n {{ loki_namespace }} -o jsonpath='{.data.loki-datasource\.yaml}'
+- name: List files in Grafana provisioning directory
+  command: >
+    kubectl --kubeconfig={{ kubeconfig }} exec -n {{ loki_namespace }} deployment/kube-prometheus-stack-grafana 
+    -- ls -l /etc/grafana/provisioning/datasources/
+  register: grafana_provisioning_files
+
+- name: Display Grafana provisioning files
+  debug:
+    var: grafana_provisioning_files.stdout_lines
+
+- name: Verify updated datasource configuration
+  command: >
+    kubectl --kubeconfig={{ kubeconfig }} exec -n {{ loki_namespace }} deployment/kube-prometheus-stack-grafana 
+    -- cat /etc/grafana/provisioning/datasources/datasource.yaml
+  register: updated_datasource_config
+
+- name: Display updated datasource configuration
+  debug:
+    var: updated_datasource_config.stdout_lines
+
+- name: Check if Loki datasource is present
+  command: >
+    kubectl --kubeconfig={{ kubeconfig }} exec -n {{ loki_namespace }} deployment/kube-prometheus-stack-grafana 
+    -- grep "name: Loki" /etc/grafana/provisioning/datasources/datasource.yaml
   register: loki_datasource_check
+  ignore_errors: yes
 
-- name: Display Loki datasource configuration
+- name: Display Loki datasource check result
   debug:
-    var: loki_datasource_check.stdout
-
-- name: Check Grafana logs for any issues
-  command: kubectl --kubeconfig={{ kubeconfig }} logs -l app.kubernetes.io/name=grafana -n {{ loki_namespace }} --tail=50
-  register: grafana_logs
-
-- name: Display Grafana logs
-  debug:
-    var: grafana_logs.stdout_lines
-
-- name: Check if Loki datasource file is mounted
-  command: kubectl --kubeconfig={{ kubeconfig }} exec -n {{ loki_namespace }} deployment/kube-prometheus-stack-grafana -- ls /etc/grafana/provisioning/datasources/
-  register: datasource_files
-
-- name: Display datasource files
-  debug:
-    var: datasource_files.stdout_lines
-
-- name: Check content of datasource.yaml
-  command: kubectl --kubeconfig={{ kubeconfig }} exec -n {{ loki_namespace }} deployment/kube-prometheus-stack-grafana -- cat /etc/grafana/provisioning/datasources/datasource.yaml
-  register: datasource_content
-
-- name: Display datasource content
-  debug:
-    var: datasource_content.stdout_lines
+    var: loki_datasource_check.stdout_lines

@@ -1,0 +1,24 @@
+server:
+  http_listen_port: 3101
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    headers:
+      X-Scope-OrgID: tenet1
+
+scrapeConfigs:
+  - job_name: kubernetes-pods-name
+    kubernetes_sd_configs:
+    - role: pod
+    pipeline_stages:
+      - cri: {}
+    relabel_configs:
+      - source_labels:
+          - __meta_kubernetes_pod_label_name
+        target_label: app
+
+client:
+  backoff_config:
+    min_period: 5s
+    max_period: 1m
+    max_retries: 10

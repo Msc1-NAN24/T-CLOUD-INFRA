@@ -101,6 +101,11 @@
   roles:
     - role: cert_manager
 
+- name: Install loki and promtail on the cluster
+  hosts: master
+  roles:
+    - role: loki
+
 - name: Install kube-prometheus on the cluster
   hosts: master
   roles:
