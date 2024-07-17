@@ -1,10 +1,6 @@
-server:
-  http_listen_port: 3101
-
 clients:
-  - url: http://loki:3100/loki/api/v1/push
-    headers:
-      X-Scope-OrgID: tenet1
+  - url: http://{{ loki_release_name }}.{{ loki_namespace }}.svc.cluster.local:3100/loki/api/v1/push
+    tenant_id: tenet1
 
 scrapeConfigs:
   - job_name: kubernetes-pods-name
@@ -17,8 +13,7 @@ scrapeConfigs:
           - __meta_kubernetes_pod_label_name
         target_label: app
 
-client:
-  backoff_config:
-    min_period: 5s
-    max_period: 1m
-    max_retries: 10
+config:
+  clients:
+    - url: http://{{ loki_release_name }}.{{ loki_namespace }}.svc.cluster.local:3100/loki/api/v1/push
+      tenant_id: tenet1

@@ -1,12 +1,12 @@
 ---
-- name: Check Loki Gateway service
-  command: kubectl --kubeconfig={{ kubeconfig }} get service loki-gateway -n {{ loki_namespace }}
-  register: loki_gateway_service
-  changed_when: false
+# - name: Check Loki Gateway service
+#   command: kubectl --kubeconfig={{ kubeconfig }} get service loki-gateway -n {{ loki_namespace }}
+#   register: loki_gateway_service
+#   changed_when: false
 
-- name: Display Loki Gateway service details
-  debug:
-    var: loki_gateway_service.stdout_lines
+# - name: Display Loki Gateway service details
+#   debug:
+#     var: loki_gateway_service.stdout_lines
 
 - name: Get Loki service details
   command: >
@@ -37,11 +37,3 @@
     --timeout=300s
   register: promtail_pods_ready
   changed_when: false
-
-- name: Check Promtail logs
-  command: kubectl --kubeconfig={{ kubeconfig }} logs -l app.kubernetes.io/name=promtail -n {{ loki_namespace }} --tail=50
-  register: promtail_logs
-
-- name: Display Promtail logs
-  debug:
-    var: promtail_logs.stdout_lines
