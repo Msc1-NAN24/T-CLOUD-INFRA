@@ -1,0 +1,30 @@
+---
+- name: Copy Loki values file
+  template:
+    src: loki-values.yaml
+    dest: /home/cloudtoto/loki-values.yaml
+
+- name: Deploy Loki using Helm
+  command: >
+    helm upgrade --install {{ loki_release_name }} grafana/loki
+    --namespace {{ loki_namespace }}
+    --version {{ loki_chart_version }}
+    -f /home/cloudtoto/loki-values.yaml
+  register: helm_install_loki
+  changed_when: "'STATUS: deployed' in helm_install_loki.stdout"
+
+- name: Wait for Loki pods to be ready
+  command: >
+    kubectl --kubeconfig={{ kubeconfig }} wait --for=condition=ready pod 
+    -l app.kubernetes.io/name=loki
+    -n {{ loki_namespace }}
+    --timeout=300s
+  register: loki_pods_ready
+  changed_when: false
+
+- name: Get Loki service details
+  command: >
+    kubectl --kubeconfig={{ kubeconfig }} get service {{ loki_release_name }} 
+    -n {{ loki_namespace }} 
+    -o jsonpath='{.spec.clusterIP}'
+  register: loki_service_ip

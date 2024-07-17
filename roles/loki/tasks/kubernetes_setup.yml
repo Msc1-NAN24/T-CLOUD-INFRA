@@ -1,0 +1,24 @@
+---
+- name: Get Kubernetes version
+  command: kubectl --kubeconfig={{ kubeconfig }} version
+  register: k8s_version
+
+- name: Display Kubernetes version
+  debug:
+    var: k8s_version.stdout_lines
+
+- name: Get node information
+  command: kubectl --kubeconfig={{ kubeconfig }} get nodes -o wide
+  register: node_info
+
+- name: Display node information
+  debug:
+    var: node_info.stdout_lines
+
+- name: Create namespace for Loki and Promtail
+  command: kubectl --kubeconfig={{ kubeconfig }} create namespace {{ loki_namespace }}
+  register: create_namespace
+  failed_when:
+    - create_namespace.rc != 0
+    - "'AlreadyExists' not in create_namespace.stderr"
+  changed_when: create_namespace.rc == 0

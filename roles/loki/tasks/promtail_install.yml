@@ -1,0 +1,25 @@
+---
+- name: Create Promtail values file
+  copy:
+    content: |
+      config:
+        lokiAddress: "http://{{ loki_service_ip.stdout }}:3100/loki/api/v1/push"
+    dest: /home/cloudtoto/promtail-values.yaml
+
+- name: Deploy Promtail using Helm
+  command: >
+    helm upgrade --install {{ promtail_release_name }} grafana/promtail
+    --namespace {{ loki_namespace }}
+    --version {{ promtail_chart_version }}
+    -f /home/cloudtoto/promtail-values.yaml
+  register: helm_install_promtail
+  changed_when: "'STATUS: deployed' in helm_install_promtail.stdout"
+
+- name: Wait for Promtail pods to be ready
+  command: >
+    kubectl --kubeconfig={{ kubeconfig }} wait --for=condition=ready pod 
+    -l app.kubernetes.io/name=promtail
+    -n {{ loki_namespace }}
+    --timeout=300s
+  register: promtail_pods_ready
+  changed_when: false
