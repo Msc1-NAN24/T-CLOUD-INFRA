@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sample-app-applicationset
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Msc1-NAN24/T-CLOUD-INFRA.git'
+    path: chart-t-clo
+    targetRevision: HEAD
+    helm:
+      parameters:
+        - name: mysql.host
+          value: "%MYSQL_HOST%"
+        - name: appKey
+          value: "%APP_KEY%"
+        - name: mysql.username
+          value: "%MYSQL_USERNAME%"
+        - name: mysql.password
+          value: "%MYSQL_PASSWORD%"
+        - name: mysql.db
+          value: "%MYSQL_DB%"
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: apps
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true

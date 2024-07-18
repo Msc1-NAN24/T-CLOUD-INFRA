@@ -1,0 +1,8 @@
+server:
+  insecure: true
+  rootpath: "/argocd"
+  basehref: "/argocd"
+configs:
+  params:
+    server.basehref: "/argocd"
+    server.rootpath: "/argocd"
