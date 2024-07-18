@@ -103,6 +103,14 @@
 
 - name: Install loki and promtail on the cluster
   hosts: master
+  vars:
+    loki_namespace: "monitoring"
+    loki_release_name: "loki"
+    loki_chart_version: "6.6.6"
+    loki_values_file: "loki-values.yaml"
+    promtail_release_name: "promtail"
+    promtail_chart_version: "6.15.3"
+    kubeconfig: "/home/cloudtoto/.kube/config"
   roles:
     - role: loki
 

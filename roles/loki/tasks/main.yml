@@ -1,0 +1,15 @@
+---
+- name: Setup Kubernetes environment
+  include_tasks: tasks/kubernetes_setup.yml
+
+- name: Setup Helm repositories
+  include_tasks: tasks/helm_setup.yml
+
+- name: Install and configure Loki
+  include_tasks: tasks/loki_install.yml
+
+- name: Install and configure Promtail
+  include_tasks: tasks/promtail_install.yml
+
+#- name: Configure Grafana for Loki
+#  include_tasks: tasks/grafana_config.yml

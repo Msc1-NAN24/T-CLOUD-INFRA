@@ -22,7 +22,7 @@ grafana:
     ## Must be provided if Ingress is enable.
     ##
     hosts:
-
+      - control-plane-vm-iac.westeurope.cloudapp.azure.com
 
     ## Path for grafana ingress
     path: /dashboard
