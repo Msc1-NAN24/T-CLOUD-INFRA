@@ -37,13 +37,13 @@
 - name: Restart Grafana pod to load the dashboard
   command: "kubectl --kubeconfig={{ kubeconfig }} rollout restart deployment kube-prometheus-stack-grafana -n monitoring"
 
-# - name: Get Grafana password
-#   ansible.builtin.shell:
-#     cmd: sudo kubectl get secret --namespace monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-#   register: grafana_password
+- name: Get Grafana password
+  ansible.builtin.shell:
+    cmd: sudo kubectl get secret --namespace monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+  register: grafana_password
 
-# - name: Save Grafana password
-#   local_action:
-#     module: copy
-#     content: "{{ grafana_password.stdout }}"
-#     dest: "{{ playbook_dir }}/credentials/grafana_password.txt"
+- name: Save Grafana password
+  local_action:
+    module: copy
+    content: "{{ grafana_password.stdout }}"
+    dest: "{{ playbook_dir }}/credentials/grafana_password.txt"

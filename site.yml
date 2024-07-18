@@ -1,120 +1,107 @@
 ---
-# - name: Pre tasks
-#   hosts: all
-#   vars:
-#     ansible_python_interpreter: /usr/bin/python3
-#   pre_tasks:
-#     - name: Verify Ansible is version 2.11 or above. (If this fails you may need to update Ansible)
-#       assert:
-#         that: "ansible_version.full is version_compare('2.11', '>=')"
-#         msg: >
-#           "Ansible is out of date. See here for more info: https://docs.technotim.live/posts/ansible-automation/"
+- name: Pre tasks
+  hosts: all
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  pre_tasks:
+    - name: Verify Ansible is version 2.11 or above. (If this fails you may need to update Ansible)
+      assert:
+        that: "ansible_version.full is version_compare('2.11', '>=')"
+        msg: >
+          "Ansible is out of date. See here for more info: https://docs.technotim.live/posts/ansible-automation/"
 
-# - name: Prepare/Add ssh keys to remote hosts
-#   hosts: all
-#   roles:
-#     - role: ssh
-#       become: true
+- name: Prepare/Add ssh keys to remote hosts
+  hosts: all
+  roles:
+    - role: ssh
+      become: true
 
-# - name: Prepare Proxmox cluster
-#   hosts: proxmox
-#   gather_facts: true
-#   become: true
-#   environment: "{{ proxy_env | default({}) }}"
-#   roles:
-#     - role: proxmox_lxc
-#       when: proxmox_lxc_configure
+- name: Prepare Proxmox cluster
+  hosts: proxmox
+  gather_facts: true
+  become: true
+  environment: "{{ proxy_env | default({}) }}"
+  roles:
+    - role: proxmox_lxc
+      when: proxmox_lxc_configure
 
-# - name: Install helm if not exists
-#   hosts: all
-#   tasks:
-#     - name: Download HELM
-#       become: true
-#       unarchive:
-#         src: https://get.helm.sh/helm-v3.15.2-linux-amd64.tar.gz
-#         dest: /usr/local/bin
-#         extra_opts: "--strip-components=1"
-#         owner: root
-#         group: root
-#         mode: 0755
-#         remote_src: true
-#       args:
-#         creates: /usr/local/bin/helm
+- name: Install helm if not exists
+  hosts: all
+  tasks:
+    - name: Download HELM
+      become: true
+      unarchive:
+        src: https://get.helm.sh/helm-v3.15.2-linux-amd64.tar.gz
+        dest: /usr/local/bin
+        extra_opts: "--strip-components=1"
+        owner: root
+        group: root
+        mode: 0755
+        remote_src: true
+      args:
+        creates: /usr/local/bin/helm
 
-# - name: Prepare k3s nodes
-#   hosts: k3s_cluster
-#   gather_facts: true
-#   environment: "{{ proxy_env | default({}) }}"
-#   roles:
-#     - role: lxc
-#       become: true
-#       when: proxmox_lxc_configure
-#     - role: prereq
-#       become: true
-#     - role: download
-#       become: true
-#     - role: raspberrypi
-#       become: true
-#     - role: k3s_custom_registries
-#       become: true
-#       when: custom_registries
+- name: Prepare k3s nodes
+  hosts: k3s_cluster
+  gather_facts: true
+  environment: "{{ proxy_env | default({}) }}"
+  roles:
+    - role: lxc
+      become: true
+      when: proxmox_lxc_configure
+    - role: prereq
+      become: true
+    - role: download
+      become: true
+    - role: raspberrypi
+      become: true
+    - role: k3s_custom_registries
+      become: true
+      when: custom_registries
 
-# - name: Setup k3s servers
-#   hosts: master
-#   environment: "{{ proxy_env | default({}) }}"
-#   roles:
-#     - role: k3s_server
-#       become: true
+- name: Setup k3s servers
+  hosts: master
+  environment: "{{ proxy_env | default({}) }}"
+  roles:
+    - role: k3s_server
+      become: true
 
-# - name: Setup k3s agents
-#   hosts: node
-#   environment: "{{ proxy_env | default({}) }}"
-#   roles:
-#     - role: k3s_agent
-#       become: true
+- name: Setup k3s agents
+  hosts: node
+  environment: "{{ proxy_env | default({}) }}"
+  roles:
+    - role: k3s_agent
+      become: true
 
-# - name: Configure k3s cluster
-#   hosts: master
-#   environment: "{{ proxy_env | default({}) }}"
-#   roles:
-#     - role: k3s_server_post
-#       become: true
+- name: Configure k3s cluster
+  hosts: master
+  environment: "{{ proxy_env | default({}) }}"
+  roles:
+    - role: k3s_server_post
+      become: true
 
-# - name: Storing kubeconfig in the playbook directory
-#   hosts: master
-#   environment: "{{ proxy_env | default({}) }}"
-#   tasks:
-#     - name: Copying kubeconfig from {{ hostvars[groups[group_name_master | default('master')][0]]['ansible_hostname'] }}
-#       ansible.builtin.fetch:
-#         src: "{{ ansible_user_dir }}/.kube/config"
-#         dest: ./kubeconfig
-#         flat: true
-#       when: ansible_hostname == hostvars[groups[group_name_master | default('master')][0]]['ansible_hostname']
+- name: Storing kubeconfig in the playbook directory
+  hosts: master
+  environment: "{{ proxy_env | default({}) }}"
+  tasks:
+    - name: Copying kubeconfig from {{ hostvars[groups[group_name_master | default('master')][0]]['ansible_hostname'] }}
+      ansible.builtin.fetch:
+        src: "{{ ansible_user_dir }}/.kube/config"
+        dest: ./kubeconfig
+        flat: true
+      when: ansible_hostname == hostvars[groups[group_name_master | default('master')][0]]['ansible_hostname']
 
-# - name: Install NGINX
-#   hosts: master
-#   roles:
-#     - role: nginx
+- name: Install NGINX
+  hosts: master
+  roles:
+    - role: nginx
 
-# - name: Install CertManager for SSL support
-#   hosts: master
-#   roles:
-#     - role: cert_manager
+- name: Install CertManager for SSL support
+  hosts: master
+  roles:
+    - role: cert_manager
 
-# - name: Install loki and promtail on the cluster
-#   hosts: master
-#   vars:
-#     loki_namespace: "monitoring"
-#     loki_release_name: "loki"
-#     loki_chart_version: "6.6.6"
-#     loki_values_file: "loki-values.yaml"
-#     promtail_release_name: "promtail"
-#     promtail_chart_version: "6.15.3"
-#     kubeconfig: "/home/cloudtoto/.kube/config"
-#   roles:
-#     - role: loki
-
-- name: Install kube-prometheus on the cluster
+- name: Install loki and promtail on the cluster
   hosts: master
   vars:
     loki_namespace: "monitoring"
@@ -125,14 +112,22 @@
     promtail_chart_version: "6.15.3"
     kubeconfig: "/home/cloudtoto/.kube/config"
   roles:
+    - role: loki
+
+- name: Install kube-prometheus on the cluster
+  hosts: master
+  vars:
+    loki_namespace: "monitoring"
+    kubeconfig: "/home/cloudtoto/.kube/config"
+  roles:
     - role: kube_prometheus
 
-# - name: Configure ArgoCD and Dependencies
-#   hosts: master
-#   roles:
-#     - role: argocd
+- name: Configure ArgoCD and Dependencies
+  hosts: master
+  roles:
+    - role: argocd
 
-# - name: Install K8S Dashboard
-#   hosts: master
-#   roles:
-#     - role: k8s_dashboard
+- name: Install K8S Dashboard
+  hosts: master
+  roles:
+    - role: k8s_dashboard
