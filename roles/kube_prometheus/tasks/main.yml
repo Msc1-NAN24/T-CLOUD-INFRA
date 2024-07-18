@@ -17,14 +17,33 @@
   args:
     creates: /usr/local/bin/prometheus
 
+- name: Check if dashboard JSON file exists locally
+  stat:
+    path: "{{ playbook_dir }}/kube/grafana/dashboards/logs-dashboard.json"
+  register: local_dashboard_file
 
-- name: Get Grafana password
-  ansible.builtin.shell:
-    cmd: sudo kubectl get secret --namespace monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-  register: grafana_password
+- name: Get Grafana pod name
+  command: >
+    kubectl --kubeconfig={{ kubeconfig }} get pods -n {{ loki_namespace }} -l app.kubernetes.io/name=grafana -o jsonpath='{.items[0].metadata.name}'
+  register: grafana_pod
 
-- name: Save Grafana password
-  local_action:
-    module: copy
-    content: "{{ grafana_password.stdout }}"
-    dest: "{{ playbook_dir }}/credentials/grafana_password.txt"
+- name: Copy dashboard JSON to Grafana pod
+  command: >
+    kubectl --kubeconfig={{ kubeconfig }} cp 
+    {{ playbook_dir }}/kube/grafana/dashboards/logs-dashboard.json
+    {{ loki_namespace }}/{{ grafana_pod.stdout }}:/var/lib/grafana/dashboards/default/logs-dashboard.json
+  when: local_dashboard_file.stat.exists
+
+- name: Restart Grafana pod to load the dashboard
+  command: "kubectl --kubeconfig={{ kubeconfig }} rollout restart deployment kube-prometheus-stack-grafana -n monitoring"
+
+# - name: Get Grafana password
+#   ansible.builtin.shell:
+#     cmd: sudo kubectl get secret --namespace monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+#   register: grafana_password
+
+# - name: Save Grafana password
+#   local_action:
+#     module: copy
+#     content: "{{ grafana_password.stdout }}"
+#     dest: "{{ playbook_dir }}/credentials/grafana_password.txt"

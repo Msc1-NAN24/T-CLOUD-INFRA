@@ -47,6 +47,8 @@ grafana:
   sidecar:
     datasources:
       enabled: true
+    dashboards:
+      enabled: true
 
   # Configuration additionnelle pour Loki
   additionalDataSources:
@@ -60,6 +62,201 @@ grafana:
         httpHeaderName1: "X-Scope-OrgID"
       secureJsonData:
         httpHeaderValue1: "tenet1"
+  
+  dashboards:
+    default:
+      logs-dashboard:
+        json: |
+          {
+            "annotations": {
+              "list": [
+                {
+                  "builtIn": 1,
+                  "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                  },
+                  "enable": true,
+                  "hide": true,
+                  "iconColor": "rgba(0, 211, 255, 1)",
+                  "name": "Annotations & Alerts",
+                  "type": "dashboard"
+                }
+              ]
+            },
+            "editable": true,
+            "fiscalYearStartMonth": 0,
+            "graphTooltip": 0,
+            "id": 28,
+            "links": [],
+            "panels": [
+              {
+                "datasource": {
+                  "type": "loki",
+                  "uid": "P8E80F9AEF21F6940"
+                },
+                "gridPos": {
+                  "h": 8,
+                  "w": 12,
+                  "x": 0,
+                  "y": 0
+                },
+                "id": 3,
+                "options": {
+                  "dedupStrategy": "none",
+                  "enableLogDetails": true,
+                  "prettifyLogMessage": false,
+                  "showCommonLabels": false,
+                  "showLabels": false,
+                  "showTime": false,
+                  "sortOrder": "Descending",
+                  "wrapLogMessage": false
+                },
+                "targets": [
+                  {
+                    "datasource": {
+                      "type": "loki",
+                      "uid": "P8E80F9AEF21F6940"
+                    },
+                    "editorMode": "code",
+                    "expr": "{namespace=\"monitoring\"}",
+                    "queryType": "range",
+                    "refId": "A"
+                  }
+                ],
+                "title": "Logs Monitoring",
+                "type": "logs"
+              },
+              {
+                "datasource": {
+                  "type": "loki",
+                  "uid": "P8E80F9AEF21F6940"
+                },
+                "gridPos": {
+                  "h": 8,
+                  "w": 12,
+                  "x": 12,
+                  "y": 0
+                },
+                "id": 2,
+                "options": {
+                  "dedupStrategy": "none",
+                  "enableLogDetails": true,
+                  "prettifyLogMessage": false,
+                  "showCommonLabels": false,
+                  "showLabels": false,
+                  "showTime": false,
+                  "sortOrder": "Descending",
+                  "wrapLogMessage": false
+                },
+                "targets": [
+                  {
+                    "datasource": {
+                      "type": "loki",
+                      "uid": "P8E80F9AEF21F6940"
+                    },
+                    "editorMode": "code",
+                    "expr": "{namespace=\"ingress-nginx\"}",
+                    "queryType": "range",
+                    "refId": "A"
+                  }
+                ],
+                "title": "Logs Nginx",
+                "type": "logs"
+              },
+              {
+                "datasource": {
+                  "type": "loki",
+                  "uid": "P8E80F9AEF21F6940"
+                },
+                "gridPos": {
+                  "h": 8,
+                  "w": 12,
+                  "x": 0,
+                  "y": 8
+                },
+                "id": 1,
+                "options": {
+                  "dedupStrategy": "none",
+                  "enableLogDetails": true,
+                  "prettifyLogMessage": false,
+                  "showCommonLabels": false,
+                  "showLabels": false,
+                  "showTime": false,
+                  "sortOrder": "Descending",
+                  "wrapLogMessage": false
+                },
+                "targets": [
+                  {
+                    "datasource": {
+                      "type": "loki",
+                      "uid": "P8E80F9AEF21F6940"
+                    },
+                    "editorMode": "code",
+                    "expr": "{namespace=\"argocd\"}",
+                    "legendFormat": "",
+                    "queryType": "range",
+                    "refId": "A"
+                  }
+                ],
+                "title": "Logs ArgoCD",
+                "type": "logs"
+              },
+              {
+                "datasource": {
+                  "type": "loki",
+                  "uid": "P8E80F9AEF21F6940"
+                },
+                "gridPos": {
+                  "h": 8,
+                  "w": 12,
+                  "x": 12,
+                  "y": 8
+                },
+                "id": 4,
+                "options": {
+                  "dedupStrategy": "none",
+                  "enableLogDetails": true,
+                  "prettifyLogMessage": false,
+                  "showCommonLabels": false,
+                  "showLabels": false,
+                  "showTime": false,
+                  "sortOrder": "Descending",
+                  "wrapLogMessage": false
+                },
+                "targets": [
+                  {
+                    "datasource": {
+                      "type": "loki",
+                      "uid": "P8E80F9AEF21F6940"
+                    },
+                    "editorMode": "code",
+                    "expr": "{namespace=\"apps\"}",
+                    "queryType": "range",
+                    "refId": "A"
+                  }
+                ],
+                "title": "Logs Apps",
+                "type": "logs"
+              }
+            ],
+            "refresh": "5s",
+            "schemaVersion": 39,
+            "tags": [],
+            "templating": {
+              "list": []
+            },
+            "time": {
+              "from": "now-6h",
+              "to": "now"
+            },
+            "timepicker": {},
+            "timezone": "browser",
+            "title": "Logs",
+            "uid": "eds2fmzgiq5fkf",
+            "version": 1,
+            "weekStart": ""
+          }
 
 loki:
   isDefault: false
