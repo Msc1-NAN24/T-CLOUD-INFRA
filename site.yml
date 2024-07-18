@@ -121,6 +121,9 @@
 
 - name: Install kube-prometheus on the cluster
   hosts: master
+  vars:
+    loki_namespace: "monitoring"
+    kubeconfig: "/home/cloudtoto/.kube/config"
   roles:
     - role: kube_prometheus
 

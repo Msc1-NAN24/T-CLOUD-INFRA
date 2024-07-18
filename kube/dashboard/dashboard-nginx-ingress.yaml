@@ -12,6 +12,10 @@ metadata:
     #nginx.ingress.kubernetes.io/configuration-snippet: rewrite ^(/k8s)$ $1/ permanent;
     #nginx.ingress.kubernetes.io/secure-backends: "true"
     #nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+  labels:
+    app.kubernetes.io/name: dashboard-nginx-ingress
+    app.kubernetes.io/part-of: dashboard
+    app.kubernetes.io/version: 1.0.0
 spec:
   ingressClassName: nginx
   tls:
