@@ -67,4 +67,15 @@ SSL: Cert-Manager
 CNI: Flannel
 Dashboard: Kubernetes Dashboard
 
-```
+# Dossiers & Fichiers
+
+## Credentials
+
+Ce dossier est utilisé pour récupérer les credentials créer par les différents services créer par ansible.
+Ces fichiers sont créer lors du lancement du playbook ./site.yml et créer à minima ces fichiers:
+
+- argocd_password.txt
+- grafana_password.txt
+- k8s_dashboard_token.txt
+
+## Ansbile

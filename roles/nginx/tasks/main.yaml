@@ -1,21 +1,21 @@
 - name: Copy NGINX Ingress Deployment
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/deploy.yaml"
-    dest: "/tmp/deploy.yaml"
+    src: "{{ playbook_dir }}/kube/nginx/nginx-deploy.yaml"
+    dest: "/tmp/nginx-deploy.yaml"
 
 - name: Install NGINX Ingress Deployment
-  shell: sudo kubectl apply -f /tmp/deploy.yaml
+  shell: sudo kubectl apply -f /tmp/nginx-deploy.yaml
 
 #- name: Install NGINX Ingress Controller
 #  shell: sudo kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/baremetal/deploy.yaml
 
 - name: Copy NGINX Ingress Controller LoadBalancer Service
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/ingress-controller-load-balancer.yaml"
-    dest: "/tmp/ingress-controller-load-balancer.yaml"
+    src: "{{ playbook_dir }}/kube/nginx/nginx-ingress-controller-load-balancer.yaml"
+    dest: "/tmp/nginx-ingress-controller-load-balancer.yaml"
 
 - name: Install NGINX Ingress Controller LoadBalancer Service
-  shell: sudo kubectl apply -f /tmp/ingress-controller-load-balancer.yaml
+  shell: sudo kubectl apply -f /tmp/nginx-ingress-controller-load-balancer.yaml
 
 # sudo kubectl port-forward service/ingress-nginx-controller-loadbalancer -n ingress-nginx 443:443 --address 0.0.0.0
 # sudo kubectl port-forward service/ingress-nginx-controller-loadbalancer -n ingress-nginx 80:80 --address 0.0.0.0
@@ -24,6 +24,3 @@
 
 - name: Change default SSL issuer for NGINX
   shell: sudo kubectl patch deployment "ingress-nginx-controller" -n "ingress-nginx" --type "json" --patch '[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--default-ssl-certificate=cert_manager/letsencrypt-prod"}]'
-
-# 7539
-# 7568

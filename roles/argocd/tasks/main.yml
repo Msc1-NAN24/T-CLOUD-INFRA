@@ -8,12 +8,12 @@
 #
 - name: Copy ArgoCD values file
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/argocd-values.yaml"
+    src: "{{ playbook_dir }}/kube/argocd/argocd-values.yaml"
     dest: "/tmp/argocd-values.yaml"
 
 - name: Copy ArgoCD ingress file
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/argocd-nginx-ingress.yaml"
+    src: "{{ playbook_dir }}/kube/argocd/argocd-nginx-ingress.yaml"
     dest: "/tmp/argocd-nginx-ingress.yaml"
 
 - name: Install with Helm
@@ -40,12 +40,11 @@
 
 - name: Copy ArgoCD ingress file
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/argocd/app-applicationset.yaml"
-    dest: "/tmp/app-applicationset.yaml"
+    src: "{{ playbook_dir }}/kube/argocd/argocd-app-applicationset.yaml"
+    dest: "/tmp/argocd-app-applicationset.yaml"
 
 - name: Deploy APP to ArgoCD
-  shell: sudo kubectl apply -f /tmp/app-applicationset.yaml
-
+  shell: sudo kubectl apply -f /tmp/argocd-app-applicationset.yaml
 
 - name: Sleep for 10 seconds
   ansible.builtin.wait_for:

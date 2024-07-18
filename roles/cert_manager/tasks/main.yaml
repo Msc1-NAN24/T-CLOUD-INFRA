@@ -9,14 +9,14 @@
 
 - name: Copy Staging Issuer file
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/staging_issuer.yaml"
-    dest: "/tmp/staging_issuer.yaml"
+    src: "{{ playbook_dir }}/kube/issuers/staging-issuer.yaml"
+    dest: "/tmp/staging-issuer.yaml"
 - name: Copy Prod Issuer file
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/prod_issuer.yaml"
-    dest: "/tmp/prod_issuer.yaml"
+    src: "{{ playbook_dir }}/kube/issuers/prod-issuer.yaml"
+    dest: "/tmp/prod-issuer.yaml"
 
 - name: Install Issuers
   shell: |
-    sudo kubectl apply -f /tmp/staging_issuer.yaml
-    sudo kubectl apply -f /tmp/prod_issuer.yaml
+    sudo kubectl apply -f /tmp/staging-issuer.yaml
+    sudo kubectl apply -f /tmp/prod-issuer.yaml
