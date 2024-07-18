@@ -105,7 +105,7 @@ metal_lb_ip_range: "10.0.0.50-10.50.0.0"
 # in your hosts.ini file.
 # Please read https://gist.github.com/triangletodd/02f595cd4c0dc9aac5f7763ca2264185 before using this.
 # Most notably, your containers must be privileged, and must not have nesting set to true.
-# Please note this script disables most of the security of lxc containers, with the trade off being that lxc
+# Please note this scripts disables most of the security of lxc containers, with the trade off being that lxc
 # containers are significantly more resource efficient compared to full VMs.
 # Mixing and matching VMs and lxc containers is not supported, ymmv if you want to do this.
 # I would only really recommend using this if you have particularly low powered proxmox nodes where the overhead of

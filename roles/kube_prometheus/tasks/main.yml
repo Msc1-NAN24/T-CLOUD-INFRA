@@ -7,7 +7,7 @@
 
 - name: Copy Grafana/Prometheus values file
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/grafana-values.yaml"
+    src: "{{ playbook_dir }}/kube/grafana/grafana-values.yaml"
     dest: "/tmp/grafana-values.yaml"
 
 - name: Install kube-prometheus-stack
