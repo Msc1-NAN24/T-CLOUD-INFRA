@@ -20,4 +20,3 @@ sed -i "s/%control_plane_ip%/$control_plane_ip/g" $inventory_config_path
 
 echo "Configuration des VMs..."
 ansible-playbook ./site.yml -i ./inventory/my-cluster/hosts.ini -v
-
