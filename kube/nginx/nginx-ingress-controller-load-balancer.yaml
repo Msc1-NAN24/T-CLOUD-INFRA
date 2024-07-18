@@ -4,6 +4,10 @@ kind: Service
 metadata:
   name: ingress-nginx-controller-loadbalancer
   namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx-controller-loadbalancer
+    app.kubernetes.io/part-of: ingress-nginx
+    app.kubernetes.io/version: 1.0.0
 spec:
   selector:
     app.kubernetes.io/component: controller
