@@ -91,6 +91,11 @@
         flat: true
       when: ansible_hostname == hostvars[groups[group_name_master | default('master')][0]]['ansible_hostname']
 
+- name: Create Secret
+  hosts: master
+  roles:
+    - role: secret
+
 - name: Install NGINX
   hosts: master
   roles:
