@@ -7,13 +7,12 @@ mysql:
 appKey: ""
 baseUrl: "/app(/|$)(.*)"
 debug: "true"
-replicaCount: "2"
 cpuLimit: "500m"
 cpuRequest: "250m"
-memoryLimit: "128Mi"
-memoryRequest: "64Mi"
+memoryLimit: "1024Mi"
+memoryRequest: "512Mi"
 hpa:
   minReplicas: 2
   maxReplicas: 10
-  cpuUtilization: 80
-  memoryUtilization: 80
+  cpuUtilization: 70
+  memoryUtilization: 70
