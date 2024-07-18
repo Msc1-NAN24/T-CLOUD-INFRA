@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 azure_devtest_lab_url=https://portal.azure.com/#@epitechfr.onmicrosoft.com/resource/subscriptions/1eb5e572-df10-47a3-977e-b0ec272641e4/resourceGroups/t-clo-902-nts-0/providers/Microsoft.DevTestLab/labs/t-clo-902-nts-0/all_resources
-time_before_configure=1
-control_plane_username="$TF_VAR_VM_USERNAME"
+time_before_configure=160
 inventory_config_path=./inventory/my-cluster/group_vars/all.yml
 argocd_application_path=./kube/argocd/argocd-app-applicationset.yaml
 hosts_path=./inventory/my-cluster/hosts.ini
@@ -16,7 +15,7 @@ while read -r LINE; do
 done < .env
 
 echo "Création de l'infrastructure..."
-#terraform apply -replace main.tfplan -auto-approve
+terraform apply -replace main.tfplan -auto-approve
 
 echo "Récupération des outputs de terraform"
 control_plane_remote="$TF_VAR_VM_USERNAME@$(terraform output --raw ip_cp)"
@@ -49,6 +48,5 @@ sed -i "s/%MYSQL_DB%/$MYSQL_DB/g" $argocd_application_path
 sed -i "s/%APP_KEY%/$(printf '%s\n' "$APP_KEY" | sed -e 's/[\/&]/\\&/g')/g" $argocd_application_path
 
 echo "Configuration des VMs..."
-#ansible-playbook ./site.yml -i ./inventory/my-cluster/hosts.ini -v
-
+ansible-playbook ./site.yml -i ./inventory/my-cluster/hosts.ini -v
 echo "Done ✅"
