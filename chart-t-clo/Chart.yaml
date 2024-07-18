@@ -4,3 +4,11 @@ description: App for T-CLO-902 project
 type: application
 version: 1.0.3
 appVersion: 1.0.3
+maintainers:
+  - name: T-CLOUD Team
+    url: "https://github.com/Msc1-NAN24/T-CLOUD-INFRA"
+home: "https://github.com/Msc1-NAN24/T-CLOUD-APP"
+keywords:
+  - app
+  - epitech
+  - sample-app
