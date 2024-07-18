@@ -2,11 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-deployment
+
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: sample-app
+  strategy:
+    rollingUpdate:
+      maxSurge: 1 # as an absolute number of replicas
+      maxUnavailable: 25% # as % of replicas
+    type: RollingUpdate
+  minReadySeconds: 5 # Using minReadySeconds to add a readiness buffer.
   template:
     metadata:
       labels:
@@ -24,6 +31,13 @@ spec:
               cpu: {{ .Values.cpuLimit }}
           ports:
             - containerPort: 80
+          readinessProbe: # Incorporating probes.
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            failureThreshold: 2
           env:
             - name: APP_DEBUG
               value: "{{ .Values.debug }}"
