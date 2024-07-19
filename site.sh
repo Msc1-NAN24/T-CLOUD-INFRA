@@ -14,6 +14,10 @@ while read -r LINE; do
     fi
 done < .env
 
+APP_KEY=$(grep '^APP_KEY=' .env | cut -d '=' -f2-)
+APP_KEY=$(echo "$APP_KEY" | xargs)
+APP_KEY=$(echo "$APP_KEY" | sed 's/"//g')
+
 echo "Création de l'infrastructure..."
 terraform apply -replace main.tfplan -auto-approve
 
