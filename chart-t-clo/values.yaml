@@ -9,7 +9,7 @@ baseUrl: "/app(/|$)(.*)"
 debug: "true"
 cpuLimit: "250m"
 cpuRequest: "250m"
-memoryLimit: "512MI"
+memoryLimit: "512Mi"
 memoryRequest: "512Mi"
 hpa:
   minReplicas: 5
