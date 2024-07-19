@@ -185,3 +185,42 @@ Un répertoire contenant le code source de notre application. La création d'une
 Un répertoire contenant le code terraform pour la création de notre infrastructure. Ce répertoire est lié à notre instance d'argoCD pour manager notre application. Une push ou un pull request sur la branche main déclenche la mise à jour de notre infrastructure.
 
 _Actuellement un souci d'autorisation Azure empêche la mise à jour de l'infrastructure._
+
+# Loki et Promtail dans notre Infrastructure
+
+## Qu'est-ce que Loki ?
+
+Loki est un système d'agrégation de logs hautement efficace et économique, conçu par Grafana Labs. Il est souvent décrit comme "Prometheus, mais pour les logs". Loki est conçu pour être très efficace en termes de stockage et d'interrogation des données de logs.
+
+Principales caractéristiques de Loki :
+- Stockage efficient des logs
+- Indexation basée sur les labels
+- Intégration native avec Grafana
+- Requêtes puissantes via LogQL
+
+## Qu'est-ce que Promtail ?
+
+Promtail est l'agent de collecte de logs conçu pour fonctionner avec Loki. Il est responsable de la découverte, du marquage et de l'envoi des logs à Loki.
+
+Principales caractéristiques de Promtail :
+- Découverte automatique des sources de logs
+- Ajout de labels aux entrées de logs
+- Envoi efficace des logs à Loki
+
+## Pourquoi utilisons-nous Loki et Promtail ?
+
+Dans notre infrastructure, Loki et Promtail jouent un rôle crucial pour plusieurs raisons :
+
+1. **Centralisation des logs** : Ils nous permettent de centraliser tous les logs de notre cluster Kubernetes en un seul endroit, facilitant ainsi la gestion et l'analyse.
+
+2. **Efficacité du stockage** : Loki utilise une approche unique pour stocker les logs, ce qui le rend très efficace en termes d'utilisation des ressources, particulièrement important dans un environnement cloud où les coûts de stockage peuvent rapidement augmenter.
+
+3. **Intégration avec Grafana** : Loki s'intègre parfaitement avec Grafana, que nous utilisons déjà pour la visualisation de nos métriques. Cela nous permet d'avoir une vue unifiée de nos métriques et de nos logs.
+
+4. **Requêtes puissantes** : Avec LogQL, nous pouvons effectuer des requêtes complexes sur nos logs, ce qui facilite le dépannage et l'analyse des problèmes.
+
+5. **Découverte automatique** : Promtail découvre automatiquement les nouveaux pods et conteneurs dans notre cluster Kubernetes, assurant ainsi que nous capturons toujours tous les logs pertinents.
+
+6. **Scalabilité** : L'architecture de Loki est conçue pour être hautement scalable, ce qui est essentiel pour notre infrastructure en croissance.
+
+En utilisant Loki et Promtail, nous améliorons significativement notre capacité à surveiller, dépanner et comprendre le comportement de notre infrastructure et de nos applications.
