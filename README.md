@@ -171,3 +171,17 @@ Architecture des dossiers/fichiers Terraform
 |- ./outputs.tf
 |- ./variables.tf
 ```
+
+## CI CD
+
+### Repertoire
+
+Nous utilisons 2 répertoires github pour notre projet.
+
+#### Application
+Un répertoire contenant le code source de notre application. La création d'une release dans ce repertoire déclenche la création d'une image stockée dans la registry de github.
+
+#### Infrastructure
+Un répertoire contenant le code terraform pour la création de notre infrastructure. Ce répertoire est lié à notre instance d'argoCD pour manager notre application. Une push ou un pull request sur la branche main déclenche la mise à jour de notre infrastructure.
+
+_Actuellement un souci d'autorisation Azure empêche la mise à jour de l'infrastructure._
