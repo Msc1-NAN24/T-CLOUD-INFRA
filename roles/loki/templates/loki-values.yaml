@@ -8,15 +8,6 @@ loki:
     size: 10Gi
     storageClass: "standard"
 
-  config:
-    storage_config:
-      boltdb_shipper:
-        active_index_directory: /data/loki/index
-        cache_location: /data/loki/index_cache
-        shared_store: filesystem
-      filesystem:
-        directory: /data/loki/chunks
-
   auth_enabled: false
 
   commonConfig:
