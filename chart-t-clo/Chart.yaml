@@ -2,8 +2,8 @@ apiVersion: v2
 name: t-clo-app
 description: App for T-CLO-902 project
 type: application
-version: 1.0.3
-appVersion: 1.0.3
+version: 1.0.4
+appVersion: 1.0.4
 maintainers:
   - name: T-CLOUD Team
     url: "https://github.com/Msc1-NAN24/T-CLOUD-INFRA"
